@@ -142,4 +142,6 @@ class Compiler:
         self.config = config
         self.compile_cache = {}
 
-    
+    def compile(self, source_code: str) -> Tuple[bool, Optional[str], Optional[str]]:
+        """Compile source code and return (success, binary_path, error_msg)"""
+        pass

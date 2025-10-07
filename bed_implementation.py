@@ -123,4 +123,23 @@ class CodeDatabase:
         results = random.sample(self.statement_snippets + self.loop_snippets, min(limit, len(self.statement_snippets + self.loop_snippets)))
         return results
     
+    def get_random_function(self) -> str:
+        """Get random function from database"""
+        if self.function_snippets:
+            return random.choice(self.function_snippets)
+        return "int dummpy() { return 0; }"
+    
+    def get_random_statement(self) -> str:
+        """Get random statement from database"""
+        if self.statement_snippets:
+            return random.choice(self.statement_snippets)
+        return "x = x + 1;"
+
+class Compiler:
+    """Handles compilation and binary analysis"""
+
+    def __init__(self, config: BEDConfig):
+        self.config = config
+        self.compile_cache = {}
+
     

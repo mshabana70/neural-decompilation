@@ -144,4 +144,13 @@ class Compiler:
 
     def compile(self, source_code: str) -> Tuple[bool, Optional[str], Optional[str]]:
         """Compile source code and return (success, binary_path, error_msg)"""
-        pass
+        # Check cache
+        code_hash = hashlib.md5(source_code.encode()).hexdigest()
+        if code_hash in self.compile_cache:
+            return self.compile_cache[code_hash]
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as src_file:
+            src_file.write(source_code)
+            src_path = src_file.name
+        
+        out_path = src_path.replace('.c', '.out')

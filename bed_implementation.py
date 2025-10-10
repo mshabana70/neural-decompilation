@@ -154,3 +154,24 @@ class Compiler:
             src_path = src_file.name
         
         out_path = src_path.replace('.c', '.out')
+
+        try:
+
+            cmd = [self.config.compiler] + self.config.compiler_flags + ['-o', out_path, src_path]
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+
+            if result.returncode == 0:
+                self.compile_cache[code_hash] = (True, out_path, None)
+                return True, out_path, None
+            else:
+                error_msg = result.stderr
+                return False, None, error_msg
+            
+        except subprocess.TimeoutExpired:
+            return False, None, "Compilation timed out"
+        except Exception as e:
+            return False, None, str(e)
+        finally:
+            if os.path.exists(src_path):
+                os.unlink(src_path)
+    

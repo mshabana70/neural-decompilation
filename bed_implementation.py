@@ -235,6 +235,35 @@ class FitnessEvaluator:
     """Evaluates fitness of candidates decompilation"""
 
     def __init__(self, target_binary: str, compiler: Compiler):
-        pass
+        self.target_binary
+        self.compiler = compiler
+        self.target_disasm = compiler.disassemble(target_binary)
+        self.target_literals = compiler.extract_literals(target_binary)
+    
+    def evaluate(self, candidate: Candidate) -> Tuple[float, List[Tuple[int, int]], np.array]:
+        """
+        Evaluate candidate fitness against target binary
+        Returns: (fitness_score, diff_regions, instruction_matches)
+        """
+        # compile candidate
+        success, binary_path, error_msg = self.compiler.compile(candidate.source_code)
 
+        if not success:
+            # compilation failed, assign worst fitness
+            return float('inf'), [(0, len(self.target_disasm))], np.zeros(len(self.target_disasm))
+        
+        candidate.binary_path = binary_path
+
+        # get disasm
+        candidate_disasm = self.compiler.disassemble(binary_path)
+        candidate.disassembly = candidate_disasm
+
+        # compute similarity
+        fitness, diff_regions, matches = self._compute_similarity(candidate_disasm)
+
+        return fitness, diff_regions, matches
+    
+    def _compute_similarity(self, candidate_disasm: List[str]) -> Tuple[float, List[Tuple[int, int]], np.array]:
+        """Compute byte similarity between target and candidate disassembly"""
+        pass
     

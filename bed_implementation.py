@@ -175,3 +175,22 @@ class Compiler:
             if os.path.exists(src_path):
                 os.unlink(src_path)
     
+    def disassemble(self, binary_path: str) -> List[str]:
+        """Disassemble binary and return list of instructions"""
+        try:
+            result = subprocess.run(['objdump', '-d', binary_path], capture_output=True, text=True, timeout=5)
+
+            if result.returncode == 0:
+                # Parse disassembly output
+                instructions = []
+                for line in result.stdout.split('\n'):
+                    # extract actual instruction lines
+                    if re.match(r'^\s*[0-9a-f]+:', line):
+                        instructions.append(line.strip())
+                return instructions
+            
+        except:
+            pass
+        return []
+    
+    

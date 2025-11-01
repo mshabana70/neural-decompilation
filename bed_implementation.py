@@ -193,4 +193,48 @@ class Compiler:
             pass
         return []
     
+    def extract_literals(self, binary_path: str) -> Dict[str, Any]:
+        """Extract literals from binary"""
+        literals = {
+            'strings': [],
+            'integers': [],
+            'floats': []
+        }
+
+        try:
+            # Extract strinsg
+            result = subprocess.run(['strings', binary_path], capture_output=True, text=True, timeout=5)
+
+            if result.returncode == 0:
+                literals['strings'] = [s.strip() for s in result.stdout.split('\n') if s.strip()]
+            
+            # Extract constants from disassembly
+            disasm = self.disassemble(binary_path)
+            for line in disasm:
+
+                # looking for immediate values
+                if '$0x' in line:
+                    match = re.search(r'\$0x([0-9a-f]+)', line)
+                    if match:
+                        value = int(match.group(1), 16)
+                        if value not in literals['integers']:
+                            literals['integers'].append(value)
+                elif '$' in line:
+                    match = re.search(r'\$(\d+)', line)
+                    if match:
+                        value = int(match.group(1))
+                        if value not in literals['integers']:
+                            literals['integers'].append(value)
+        
+        except:
+            pass
+
+        return literals
+    
+class FitnessEvaluator:
+    """Evaluates fitness of candidates decompilation"""
+
+    def __init__(self, target_binary: str, compiler: Compiler):
+        pass
+
     

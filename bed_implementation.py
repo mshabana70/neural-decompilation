@@ -265,5 +265,6 @@ class FitnessEvaluator:
     
     def _compute_similarity(self, candidate_disasm: List[str]) -> Tuple[float, List[Tuple[int, int]], np.array]:
         """Compute byte similarity between target and candidate disassembly"""
-        pass
+        # will use the difflib sequence matcher for similarity
+        matcher = difflib.SequenceMatcher(None, self.target_disasm, candidate_disasm)
     

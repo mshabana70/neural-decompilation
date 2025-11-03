@@ -267,4 +267,20 @@ class FitnessEvaluator:
         """Compute byte similarity between target and candidate disassembly"""
         # will use the difflib sequence matcher for similarity
         matcher = difflib.SequenceMatcher(None, self.target_disasm, candidate_disasm)
+
+        # track matches per instruct 
+        matches = np.zeros(len(self.target_disasm))
+        diff_regions = []
+
+        for op, i1, i2, j1, j2 in matcher.get_opcodes():
+            if op == 'equal':
+                matches[i1:i2] = 1
+            else:
+                diff_regions.append((i1, i2))
+        
+        # fitness is proportion of unmatched instructions
+        fitness = 1.0 - (np.sum(matches) / len(self.target_disasm))
+
+        return fitness, diff_regions, matches
+
     

@@ -283,4 +283,10 @@ class FitnessEvaluator:
 
         return fitness, diff_regions, matches
 
+class MutationOperator:
+    """Handles source-to-source mutations"""
+
+    def __init__(self, code_db: CodeDatabase, fitness_eval: FitnessEvaluator):
+        self.code_db = code_db
+        self.fitness_eval = fitness_eval
     

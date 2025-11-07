@@ -305,3 +305,12 @@ class MutationOperator:
         )
 
         return new_candidate
+    
+    def _select_mutation_type(self, candidate: Candidate) -> str:
+        """Select mutation type based on candidate state"""
+        # If candidate has diff regions, prefer targeted mutations
+        if candidate.diff_regions and random.random() < 0.75:
+            return random.choice(['fix_literals', 'replace', 'insert_from_db'])
+        else:
+            return random.choice(list(BEDConfig().mutation_weights.keys()))
+    

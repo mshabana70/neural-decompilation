@@ -326,6 +326,10 @@ class MutationOperator:
         elif mutation_type == "insert":
             idx = random.randint(0, len(lines))
             lines.insert(idx, self.code_db.get_random_statement())
+        elif mutation_type == "swap":
+            if len(lines) > 1:
+                i, j = random.sample(range(len(lines)), 1)
+                lines[i], lines[j] = lines[j], lines[i]
         elif mutation_type == "replace":
             if lines:
                 idx = random.randint(0, len(lines) - 1)

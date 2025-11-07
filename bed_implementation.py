@@ -314,3 +314,21 @@ class MutationOperator:
         else:
             return random.choice(list(BEDConfig().mutation_weights.keys()))
     
+    def _apply_mutation(self, source: str, mutation_type: str, candidate: Candidate) -> str:
+        """Apply specific mutation type"""
+
+        lines = source.split('\n')
+
+        if mutation_type == "cut":
+            if len(lines) > 1:
+                idx = random.randint(0, len(lines) - 1)
+                del lines[idx]
+        elif mutation_type == "insert":
+            idx = random.randint(0, len(lines))
+            lines.insert(idx, self.code_db.get_random_statement())
+        elif mutation_type == "replace":
+            if lines:
+                idx = random.randint(0, len(lines) - 1)
+                lines[idx] = self.code_db.get_random_statement()
+        
+        return '\n'.join(lines)

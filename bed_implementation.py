@@ -290,3 +290,18 @@ class MutationOperator:
         self.code_db = code_db
         self.fitness_eval = fitness_eval
     
+    def mutate(self, candidate: Candidate, mutation_type: Optional[str] = None) -> Candidate:
+        """Apply mutation to candidate"""
+
+        if mutation_type is None:
+            mutation_type = self._select_mutation_type()
+
+        new_source = self._apply_mutation(candidate.source_code, mutation_type, candidate)
+
+        new_candidate = Candidate(
+            source_code=new_source,
+            generation=candidate.generation + 1,
+            parent_ids=[candidate.id]
+        )
+
+        return new_candidate

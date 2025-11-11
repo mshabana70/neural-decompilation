@@ -334,5 +334,23 @@ class MutationOperator:
             if lines:
                 idx = random.randint(0, len(lines) - 1)
                 lines[idx] = self.code_db.get_random_statement()
+        elif mutation_type == "fix_literals":
+            new_source = self._fix_literals(source, candidate)
+            return new_source
+        elif mutation_type == "promote_guarded":
+            # promote statements from compound statements
+            new_source = self._promote_guarded_statements(source)
+            return new_source
+        elif mutation_type == "explode_for_loop":
+            # explode for loops into while loops
+            new_source = self._explode_for_loop(source)
+            return new_source
+        elif mutation_type == "coalesce_while_loop":
+            # conver while loops to for loops
+            new_source = self._coalesce_while_loop(source)
+            return new_source
+        elif mutation_type == "rename_variable":
+            new_source = self._rename_variable(source)
+            return new_source
         
         return '\n'.join(lines)

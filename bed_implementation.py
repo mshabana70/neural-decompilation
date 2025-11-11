@@ -354,3 +354,29 @@ class MutationOperator:
             return new_source
         
         return '\n'.join(lines)
+    
+    def _fix_literals(self, source: str, candidate: Candidate) -> str:
+        """Inject literals form target binary into source code"""
+        # simple literal replacement
+        target_lits = self.fitness_eval.target_literals
+
+        # try to replace integer literals 
+        for target_int in target_lits['integers'][:5]:
+            # find a integer in source to replace
+            match = re.search(r'\b\d+\b', source)
+            if match:
+                source = source[:match.start()] + str(target_int) + source[match.end():]
+                break
+        
+        # try to replace strings literals
+        for target_str in target_lits['strinsg'][:3]:
+            if '"' in source:
+                # find a string literal to replace
+                match = re.search(r'"[^"]*"', source)
+                if match:
+                    source = source[:match.start()] + f'"{target_str}"' + source[match.end():]
+                    break
+        
+        return source
+    
+    
